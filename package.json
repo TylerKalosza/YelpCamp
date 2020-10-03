@@ -1,0 +1,23 @@
+{
+  "name": "yelpcamp",
+  "version": "1.0.0",
+  "description": "YelpCamp Website",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TylerKalosza/YelpCamp.git"
+  },
+  "author": "Tyler Kalosza",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TylerKalosza/YelpCamp/issues"
+  },
+  "homepage": "https://github.com/TylerKalosza/YelpCamp#readme",
+  "dependencies": {
+    "ejs": "^3.1.5",
+    "express": "^4.17.1"
+  }
+}
