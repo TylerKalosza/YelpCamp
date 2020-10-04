@@ -17,11 +17,11 @@ mongoose.connect("mongodb://localhost/yelp-camp", {
 .catch(error => console.log(error.message));
 
 // This is temporary.
-var campgrounds = [
-    {name: "Algonquin National Park", image: "https://www.hinzie.com/media/image/60103_max.jpg"},
-    {name: "Killbear Provincial Park", image: "https://i0.wp.com/rvplacestogo.com/wp-content/uploads/2017/07/feature-1.jpg"},
-    {name: "Letchworth State Park", image: "https://www.travelingmom.com/wp-content/uploads/2015/10/DSC04764_edited-1-800x450.jpg"}
-];
+// var campgrounds = [
+//     {, },
+//     {, },
+//     {name: "Letchworth State Park", image: "https://www.travelingmom.com/wp-content/uploads/2015/10/DSC04764_edited-1-800x450.jpg"}
+// ];
 
 //--------
 // Schema
@@ -33,6 +33,18 @@ var campgroundSchema = new mongoose.Schema({
 });
 
 var Campground = mongoose.model("Campground", campgroundSchema);
+
+// Campground.create({
+//     name: "Killbear Provincial Park",
+//     image: "https://i0.wp.com/rvplacestogo.com/wp-content/uploads/2017/07/feature-1.jpg"
+// }, (err, campground) => {
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         console.log("Created campground:");
+//         console.log(campground);
+//     }
+// });
 
 //--------
 // Routes
