@@ -19,6 +19,9 @@ app.get("/campgrounds", (req, res) => {
     res.render("campgrounds", {campgrounds: campgrounds});
 });
 
+app.post("/campgrounds", (req, res) => {
+});
+
 // Tell Express to listen for requests (start server).
 app.listen(port, () => {
     console.log("The YelpCamp server is running, listening on port " + port);
