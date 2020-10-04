@@ -12,17 +12,27 @@ app.get("/", (req, res) => {
     res.render("home");
 });
 
-app.get("/campgrounds", (req, res) => {
-    var campgrounds = [
-        {name: "Algonquin National Park", image: "https://www.hinzie.com/media/image/60103_max.jpg"},
-        {name: "Killbear Provincial Park", image: "https://i0.wp.com/rvplacestogo.com/wp-content/uploads/2017/07/feature-1.jpg"},
-        {name: "Letchworth State Park", image: "https://www.travelingmom.com/wp-content/uploads/2015/10/DSC04764_edited-1-800x450.jpg"}
-    ];
+// This is temporary.
+var campgrounds = [
+    {name: "Algonquin National Park", imageUrl: "https://www.hinzie.com/media/image/60103_max.jpg"},
+    {name: "Killbear Provincial Park", imageUrl: "https://i0.wp.com/rvplacestogo.com/wp-content/uploads/2017/07/feature-1.jpg"},
+    {name: "Letchworth State Park", imageUrl: "https://www.travelingmom.com/wp-content/uploads/2015/10/DSC04764_edited-1-800x450.jpg"}
+];
 
+app.get("/campgrounds", (req, res) => {
     res.render("campgrounds", {campgrounds: campgrounds});
 });
 
 app.post("/campgrounds", (req, res) => {
+    var name = req.body.name;
+    var imageUrl = req.body.imageUrl;
+
+    campgrounds.push({name: name, imageUrl: imageUrl});
+    res.redirect("/campgrounds");
+});
+
+app.get("/campgrounds/new", (req, res) => {
+    res.render("new.ejs");
 });
 
 // Tell Express to listen for requests (start server).
