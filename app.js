@@ -79,7 +79,13 @@ app.get("/campgrounds/new", (req, res) => {
 
 // Show route
 app.get("/campgrounds/:id", (req, res) => {
-    res.send("This will be the show page one day!");
+    Campground.findById(req.params.id, (err, foundCampground) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("show", {campground: foundCampground});
+        }
+    });
 });
 
 // Tell Express to listen for requests (start server).
