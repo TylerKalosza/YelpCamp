@@ -9,7 +9,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
 
-mongoose.connect("mongodb://localhost/yelp-camp", {
+mongoose.connect("mongodb://localhost:27017/yelp-camp", {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -35,6 +35,7 @@ app.get("/", (req, res) => {
     res.render("home");
 });
 
+// Index route
 app.get("/campgrounds", (req, res) => {
     // Get all campgrounds from the database and render the campgrounds page with the data.
     Campground.find({}, function(err, allCampgrounds) {
@@ -46,6 +47,7 @@ app.get("/campgrounds", (req, res) => {
     });
 });
 
+// Create route
 app.post("/campgrounds", (req, res) => {
     // Get the data from the form.
     var name = req.body.name;
@@ -66,8 +68,14 @@ app.post("/campgrounds", (req, res) => {
     });
 });
 
+// New route - This needs to be declared before the show route.
 app.get("/campgrounds/new", (req, res) => {
     res.render("new.ejs");
+});
+
+// Show route
+app.get("/campgrounds/:id", (req, res) => {
+    res.send("This will be the show page one day!");
 });
 
 // Tell Express to listen for requests (start server).
