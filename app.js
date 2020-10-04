@@ -16,13 +16,6 @@ mongoose.connect("mongodb://localhost/yelp-camp", {
 .then(() => console.log("Connected to database!"))
 .catch(error => console.log(error.message));
 
-// This is temporary.
-// var campgrounds = [
-//     {, },
-//     {, },
-//     {name: "Letchworth State Park", image: "https://www.travelingmom.com/wp-content/uploads/2015/10/DSC04764_edited-1-800x450.jpg"}
-// ];
-
 //--------
 // Schema
 //--------
@@ -34,18 +27,6 @@ var campgroundSchema = new mongoose.Schema({
 
 var Campground = mongoose.model("Campground", campgroundSchema);
 
-// Campground.create({
-//     name: "Killbear Provincial Park",
-//     image: "https://i0.wp.com/rvplacestogo.com/wp-content/uploads/2017/07/feature-1.jpg"
-// }, (err, campground) => {
-//     if (err) {
-//         console.log(err);
-//     } else {
-//         console.log("Created campground:");
-//         console.log(campground);
-//     }
-// });
-
 //--------
 // Routes
 //--------
@@ -55,15 +36,34 @@ app.get("/", (req, res) => {
 });
 
 app.get("/campgrounds", (req, res) => {
-    res.render("campgrounds", {campgrounds: campgrounds});
+    // Get all campgrounds from the database and render the campgrounds page with the data.
+    Campground.find({}, function(err, allCampgrounds) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("campgrounds", {campgrounds: allCampgrounds})
+        }
+    });
 });
 
 app.post("/campgrounds", (req, res) => {
+    // Get the data from the form.
     var name = req.body.name;
     var image = req.body.image;
+    var newCampground = {
+        name: name,
+        image: image
+    };
 
-    campgrounds.push({name: name, image: image});
-    res.redirect("/campgrounds");
+    // Create the new object in the database.
+    Campground.create(newCampground, function(err, campground) {
+        if (err) {
+            console.log(err);
+        } else {
+            // If successful redirect to campgrounds page.
+            res.redirect("/campgrounds");
+        }
+    });
 });
 
 app.get("/campgrounds/new", (req, res) => {
