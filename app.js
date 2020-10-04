@@ -22,7 +22,8 @@ mongoose.connect("mongodb://localhost:27017/yelp-camp", {
 
 var campgroundSchema = new mongoose.Schema({
     name: String,
-    image: String
+    image: String,
+    description: String
 });
 
 var Campground = mongoose.model("Campground", campgroundSchema);
@@ -52,9 +53,12 @@ app.post("/campgrounds", (req, res) => {
     // Get the data from the form.
     var name = req.body.name;
     var image = req.body.image;
+    var description = req.body.description;
+
     var newCampground = {
         name: name,
-        image: image
+        image: image,
+        description: description
     };
 
     // Create the new object in the database.
