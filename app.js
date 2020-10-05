@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const seedDb = require("./seeds")
 
 const Campground = require("./models/campground");
+const Comment = require("./models/comment");
 
 const app = express();
 
@@ -20,14 +21,14 @@ mongoose.connect("mongodb://localhost:27017/yelp-camp", {
 .then(() => console.log("Connected to database!"))
 .catch(error => console.log(error.message));
 
-seedDb();
+// seedDb();
 
 //--------
 // Routes
 //--------
 
 app.get("/", (req, res) => {
-    res.render("home");
+    res.render("landing");
 });
 
 // Index route
@@ -37,7 +38,7 @@ app.get("/campgrounds", (req, res) => {
         if (err) {
             console.log(err);
         } else {
-            res.render("index", {campgrounds: allCampgrounds})
+            res.render("campgrounds/index", {campgrounds: allCampgrounds})
         }
     });
 });
@@ -68,7 +69,7 @@ app.post("/campgrounds", (req, res) => {
 
 // New route - This needs to be declared before the show route.
 app.get("/campgrounds/new", (req, res) => {
-    res.render("new.ejs");
+    res.render("campgrounds/new");
 });
 
 // Show route
@@ -77,7 +78,38 @@ app.get("/campgrounds/:id", (req, res) => {
         if (err) {
             console.log(err);
         } else {
-            res.render("show", {campground: foundCampground});
+            res.render("campgrounds/show", {campground: foundCampground});
+        }
+    });
+});
+
+// Create comment route.
+app.post("/campgrounds/:id/comments", (req, res) => {
+    Campground.findById(req.params.id, (err, campground) => {
+        if (err) {
+            console.log(err);
+            res.redirect("/campgrounds");
+        } else {
+            Comment.create(req.body.comment, (err, comment) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    campground.comments.push(comment);
+                    campground.save();
+                    res.redirect("/campgrounds/" + campground._id);
+                }
+            });
+        }
+    });
+});
+
+// New comment route.
+app.get("/campgrounds/:id/comments/new", (req, res) => {
+    Campground.findById(req.params.id, (err, foundCampground) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("comments/new", {campground: foundCampground});
         }
     });
 });
