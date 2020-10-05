@@ -2,8 +2,9 @@ const port = process.env.PORT || 1337;
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const seedDb = require("./seeds")
 
-const Campground = require("./models/campground.js");
+const Campground = require("./models/campground");
 
 const app = express();
 
@@ -13,10 +14,13 @@ app.set("view engine", "ejs");
 
 mongoose.connect("mongodb://localhost:27017/yelp-camp", {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useFindAndModify: false
 })
 .then(() => console.log("Connected to database!"))
 .catch(error => console.log(error.message));
+
+seedDb();
 
 //--------
 // Routes
@@ -69,7 +73,7 @@ app.get("/campgrounds/new", (req, res) => {
 
 // Show route
 app.get("/campgrounds/:id", (req, res) => {
-    Campground.findById(req.params.id, (err, foundCampground) => {
+    Campground.findById(req.params.id).populate("comments").exec((err, foundCampground) => {
         if (err) {
             console.log(err);
         } else {
