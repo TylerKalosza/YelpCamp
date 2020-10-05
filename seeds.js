@@ -20,10 +20,6 @@ const data = [
     }
 ];
 
-//----------------------
-// Old seedDb function.
-//----------------------
-
 function seedDb() {
     // Remove all comments.
     Comment.deleteMany({}, (err) => {
