@@ -3,6 +3,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
+const Campground = require("./models/campground.js");
+
 const app = express();
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -15,18 +17,6 @@ mongoose.connect("mongodb://localhost:27017/yelp-camp", {
 })
 .then(() => console.log("Connected to database!"))
 .catch(error => console.log(error.message));
-
-//--------
-// Schema
-//--------
-
-var campgroundSchema = new mongoose.Schema({
-    name: String,
-    image: String,
-    description: String
-});
-
-var Campground = mongoose.model("Campground", campgroundSchema);
 
 //--------
 // Routes
