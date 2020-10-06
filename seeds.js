@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Campground = require("./models/campground");
 const Comment = require("./models/comment");
 
-const data = [
+const seeds = [
     {
         name: "Algonquin Provincial Park",
         image: "https://www.hinzie.com/media/image/60103_max.jpg",
@@ -20,49 +20,27 @@ const data = [
     }
 ];
 
-function seedDb() {
-    // Remove all comments.
-    Comment.deleteMany({}, (err) => {
-        if (err) {
-            console.log(err);
-        }
+async function seedDb() {
+    await Comment.deleteMany({});
+    console.log("Comments removed.");
+    await Campground.deleteMany({});
+    console.log("Campgrounds removed.");
 
-        console.log("Removed all comments.");
+    for (const seed of seeds) {
+        let campground = await Campground.create(seed);
+        console.log("Campground \"" + campground.name + "\" created.");
 
-        // Remove all campgrounds.
-        Campground.deleteMany({}, (err) => {
-            if (err) {
-                console.log(err);
+        let comment = await Comment.create(
+            {
+                text: "This place is great, but I wish there was internet.",
+                author: "Homer Simpson"
             }
-
-            console.log("Removed all campgrounds.");
-
-            data.forEach((seed) => {
-                Campground.create(seed, (err, campground) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log("Added campground " + campground.name + ".");
-
-                        Comment.create(
-                            {
-                                text: "This place is great, but I wish there was internet.",
-                                author: "Homer Simpson"
-                            }, (err, comment) => {
-                                if (err) {
-                                    console.log(err);
-                                } else {
-                                    campground.comments.push(comment);
-                                    campground.save();
-                                    console.log("Created new comment - \"" + comment.text + "\".");
-                                }
-                            }
-                        );
-                    }
-                });
-            });
-        });
-    });
+        )
+        console.log("Comment \"" + comment.text + "\" created.");
+        campground.comments.push(comment);
+        campground.save();
+        console.log("Comment added to campground.")
+    }
 }
 
 module.exports = seedDb;

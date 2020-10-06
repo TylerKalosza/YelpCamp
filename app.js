@@ -21,7 +21,7 @@ mongoose.connect("mongodb://localhost:27017/yelp-camp", {
 .then(() => console.log("Connected to database!"))
 .catch(error => console.log(error.message));
 
-// seedDb();
+//seedDb();
 
 //--------
 // Routes
