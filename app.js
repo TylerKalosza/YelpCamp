@@ -165,6 +165,12 @@ app.post("/login", passport.authenticate("local", {
 }), (req, res) => {
 });
 
+// Logout route.
+app.get("/logout", (req, res) => {
+    req.logout();
+    res.redirect("/campgrounds");
+});
+
 // Tell Express to listen for requests (start server).
 app.listen(port, () => {
     console.log("The YelpCamp server is running, listening on port " + port);
