@@ -61,19 +61,14 @@ router.get("/:id", (req, res) => {
 });
 
 // Edit route.
-router.get("/:id/edit", (req, res) => {
+router.get("/:id/edit", checkCampgroundOwnership, (req, res) => {
     Campground.findById(req.params.id, (err, foundCampground) => {
-        if (err) {
-            console.log(err);
-            res.redirect("/campgrounds");
-        } else {
-            res.render("campgrounds/edit", {campground: foundCampground});
-        }
+        res.render("campgrounds/edit", {campground: foundCampground});
     });
 });
 
-// Put route.
-router.put("/:id", (req, res) => {
+// Update route.
+router.put("/:id", checkCampgroundOwnership, (req, res) => {
     Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updatedCampground) => {
         if (err) {
             console.log(err);
@@ -84,7 +79,7 @@ router.put("/:id", (req, res) => {
 });
 
 // Delete route, this removes the comments, it is older syntax.
-router.delete("/:id", (req, res) => {
+router.delete("/:id", checkCampgroundOwnership, (req, res) => {
     Campground.findByIdAndDelete(req.params.id, (err, campground) => {
         if (err) {
             console.log(err);
@@ -119,6 +114,26 @@ function isLoggedIn(req, res, next) {
     }
 
     res.redirect("/login");
+}
+
+function checkCampgroundOwnership(req, res, next) {
+    if (req.isAuthenticated()){
+        Campground.findById(req.params.id, (err, foundCampground) => {
+            if (err) {
+                console.log(err);
+                res.redirect("back");
+            } else {
+                if (foundCampground.author.id.equals(req.user._id)) {
+                    next();
+                } else {
+                    console.log("You do not have permission to do that.");
+                    res.redirect("back");
+                }
+            }
+        });
+    } else {
+        res.send("You need to be logged in to do that.");
+    }
 }
 
 module.exports = router;
