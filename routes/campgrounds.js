@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Campground = require("../models/campground");
+const Comment = require("../models/comment");
 
 // Index route
 router.get("/", (req, res) => {
@@ -82,17 +83,34 @@ router.put("/:id", (req, res) => {
     });
 });
 
-// Delete route.
+// Delete route, this removes the comments, it is older syntax.
 router.delete("/:id", (req, res) => {
-    Campground.findByIdAndDelete(req.params.id, (err) => {
+    Campground.findByIdAndDelete(req.params.id, (err, campground) => {
         if (err) {
             console.log(err);
-            res.redirect("/campgrounds");
-        } else {
-            res.redirect("/campgrounds");
         }
+
+        Comment.deleteMany({_id: { $in: campground.comments}}, (err) => {
+            if (err) {
+                console.log(err);
+            }
+
+            res.redirect("/campgrounds");
+        });
     });
-});
+})
+
+// Old delete route, this does not remove the comments.
+// router.delete("/:id", (req, res) => {
+//     Campground.findByIdAndDelete(req.params.id, (err) => {
+//         if (err) {
+//             console.log(err);
+//             res.redirect("/campgrounds");
+//         } else {
+//             res.redirect("/campgrounds");
+//         }
+//     });
+// });
 
 // Middleware.
 function isLoggedIn(req, res, next) {

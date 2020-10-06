@@ -27,21 +27,21 @@ async function seedDb() {
         await Campground.deleteMany({});
         console.log("Campgrounds removed.");
 
-        for (const seed of seeds) {
-            let campground = await Campground.create(seed);
-            console.log("Campground \"" + campground.name + "\" created.");
+        // for (const seed of seeds) {
+        //     let campground = await Campground.create(seed);
+        //     console.log("Campground \"" + campground.name + "\" created.");
 
-            // let comment = await Comment.create(
-            //     {
-            //         text: "This place is great, but I wish there was internet.",
-            //         author: "Homer Simpson"
-            //     }
-            // )
-            // console.log("Comment \"" + comment.text + "\" created.");
-            // campground.comments.push(comment);
-            campground.save();
-            // console.log("Comment added to campground.")
-        }
+        //     let comment = await Comment.create(
+        //         {
+        //             text: "This place is great, but I wish there was internet.",
+        //             author: "Homer Simpson"
+        //         }
+        //     )
+        //     console.log("Comment \"" + comment.text + "\" created.");
+        //     campground.comments.push(comment);
+        //     campground.save();
+        //     console.log("Comment added to campground.")
+        // }
     } catch (err) {
         console.log(err);
     }

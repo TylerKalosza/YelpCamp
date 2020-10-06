@@ -31,7 +31,7 @@ mongoose.connect("mongodb://localhost:27017/yelp-camp", {
 .then(() => console.log("Connected to database!"))
 .catch(error => console.log(error.message));
 
-// seedDb();
+//seedDb();
 
 app.use(require("express-session")({
     secret: "This is my secret. This can be anything.",
