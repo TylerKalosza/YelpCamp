@@ -152,6 +152,19 @@ app.post("/register", (req, res) => {
     });
 });
 
+// Show login form.
+app.get("/login", (req, res) => {
+    res.render("login");
+});
+
+// Handle login logic. (I can remove the callback because I don't use it)
+// app.post("/login", middleware, callback)
+app.post("/login", passport.authenticate("local", {
+    successRedirect: "/campgrounds",
+    failureRedirect: "/login"
+}), (req, res) => {
+});
+
 // Tell Express to listen for requests (start server).
 app.listen(port, () => {
     console.log("The YelpCamp server is running, listening on port " + port);
