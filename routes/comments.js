@@ -40,6 +40,7 @@ router.get("/new", isLoggedIn, (req, res) => {
     });
 });
 
+// Middleware.
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
         return next();

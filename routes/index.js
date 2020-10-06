@@ -46,6 +46,7 @@ router.get("/logout", (req, res) => {
     res.redirect("/campgrounds");
 });
 
+// Middleware.
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
         return next();

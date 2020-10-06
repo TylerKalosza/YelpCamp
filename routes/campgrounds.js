@@ -15,16 +15,21 @@ router.get("/", (req, res) => {
 });
 
 // Create route
-router.post("/", (req, res) => {
+router.post("/", isLoggedIn, (req, res) => {
     // Get the data from the form.
-    var name = req.body.name;
-    var image = req.body.image;
-    var description = req.body.description;
+    const name = req.body.name;
+    const image = req.body.image;
+    const description = req.body.description;
+    const author = {
+        id: req.user._id,
+        username: req.user.username
+    };
 
-    var newCampground = {
+    const newCampground = {
         name: name,
         image: image,
-        description: description
+        description: description,
+        author: author
     };
 
     // Create the new object in the database.
@@ -39,7 +44,7 @@ router.post("/", (req, res) => {
 });
 
 // New route - This needs to be declared before the show route.
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
     res.render("campgrounds/new");
 });
 
@@ -53,5 +58,14 @@ router.get("/:id", (req, res) => {
         }
     });
 });
+
+// Middleware.
+function isLoggedIn(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+
+    res.redirect("/login");
+}
 
 module.exports = router;
