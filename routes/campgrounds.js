@@ -14,7 +14,7 @@ router.get("/", (req, res) => {
     });
 });
 
-// Create route
+// Create route.
 router.post("/", isLoggedIn, (req, res) => {
     // Get the data from the form.
     const name = req.body.name;
@@ -48,13 +48,48 @@ router.get("/new", isLoggedIn, (req, res) => {
     res.render("campgrounds/new");
 });
 
-// Show route
+// Show route.
 router.get("/:id", (req, res) => {
     Campground.findById(req.params.id).populate("comments").exec((err, foundCampground) => {
         if (err) {
             console.log(err);
         } else {
             res.render("campgrounds/show", {campground: foundCampground});
+        }
+    });
+});
+
+// Edit route.
+router.get("/:id/edit", (req, res) => {
+    Campground.findById(req.params.id, (err, foundCampground) => {
+        if (err) {
+            console.log(err);
+            res.redirect("/campgrounds");
+        } else {
+            res.render("campgrounds/edit", {campground: foundCampground});
+        }
+    });
+});
+
+// Put route.
+router.put("/:id", (req, res) => {
+    Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updatedCampground) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.redirect("/campgrounds/" + updatedCampground._id);
+        }
+    });
+});
+
+// Delete route.
+router.delete("/:id", (req, res) => {
+    Campground.findByIdAndDelete(req.params.id, (err) => {
+        if (err) {
+            console.log(err);
+            res.redirect("/campgrounds");
+        } else {
+            res.redirect("/campgrounds");
         }
     });
 });
