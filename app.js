@@ -37,6 +37,12 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+// My own middleware, this will pass current user to every route.
+app.use((req, res, next) => {
+    res.locals.currentUser = req.user;
+    next();
+});
+
 //--------
 // Routes
 //--------
@@ -52,7 +58,7 @@ app.get("/campgrounds", (req, res) => {
         if (err) {
             console.log(err);
         } else {
-            res.render("campgrounds/index", {campgrounds: allCampgrounds})
+            res.render("campgrounds/index", {campgrounds: allCampgrounds});
         }
     });
 });
