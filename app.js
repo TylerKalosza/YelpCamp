@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
 app.set("view engine", "ejs");
-app.use(flash());
+app.use(flash()); // Must come before passport configuration.
 
 mongoose.connect("mongodb://localhost:27017/yelp-camp", {
     useNewUrlParser: true,
@@ -49,6 +49,10 @@ passport.deserializeUser(User.deserializeUser());
 // My own middleware, this will pass current user to every route.
 app.use((req, res, next) => {
     res.locals.currentUser = req.user;
+    res.locals.info = req.flash("info");
+    res.locals.success = req.flash("success");
+    res.locals.warning = req.flash("warning");
+    res.locals.error = req.flash("error");
     next();
 });
 
