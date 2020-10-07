@@ -1,10 +1,11 @@
 const express = require("express");
 const router = express.Router({mergeParams: true}); // Merges the parameters that were removed and placed in the app.js.
+const middleware = require("../middleware"); // Automatically knows I'm looking for index.js.
 const Campground = require("../models/campground");
 const Comment = require("../models/comment");
 
 // Create comment route.
-router.post("/", isLoggedIn, (req, res) => {
+router.post("/", middleware.isLoggedIn, (req, res) => {
     Campground.findById(req.params.id, (err, campground) => {
         if (err) {
             console.log(err);
@@ -30,7 +31,7 @@ router.post("/", isLoggedIn, (req, res) => {
 });
 
 // New comment route.
-router.get("/new", isLoggedIn, (req, res) => {
+router.get("/new", middleware.isLoggedIn, (req, res) => {
     Campground.findById(req.params.id, (err, foundCampground) => {
         if (err) {
             console.log(err);
@@ -41,7 +42,7 @@ router.get("/new", isLoggedIn, (req, res) => {
 });
 
 // Edit comment route.
-router.get("/:commentId/edit", checkCommentOwnership, (req, res) => {
+router.get("/:commentId/edit", middleware.checkCommentOwnership, (req, res) => {
     Comment.findById(req.params.commentId, (err, foundComment) => {
         if (err) {
             console.log(err);
@@ -52,7 +53,7 @@ router.get("/:commentId/edit", checkCommentOwnership, (req, res) => {
 });
 
 // Update comment route.
-router.put("/:commentId", checkCommentOwnership, (req, res) => {
+router.put("/:commentId", middleware.checkCommentOwnership, (req, res) => {
     Comment.findByIdAndUpdate(req.params.commentId, req.body.comment, (err, updatedComment) => {
         if (err) {
             console.log(err);
@@ -64,7 +65,7 @@ router.put("/:commentId", checkCommentOwnership, (req, res) => {
 });
 
 // Delete route.
-router.delete("/:commentId", checkCommentOwnership, (req, res) => {
+router.delete("/:commentId", middleware.checkCommentOwnership, (req, res) => {
     Comment.findByIdAndDelete(req.params.commentId, (err) => {
         if (err) {
             console.log(err);
@@ -73,38 +74,5 @@ router.delete("/:commentId", checkCommentOwnership, (req, res) => {
         res.redirect("/campgrounds/" + req.params.id);
     })
 })
-
-//------------
-// Middleware
-//------------
-
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-
-    res.redirect("/login");
-}
-
-function checkCommentOwnership(req, res, next) {
-    if (req.isAuthenticated()){
-        Comment.findById(req.params.commentId, (err, foundComment) => {
-            if (err) {
-                console.log(err);
-                res.redirect("back");
-            } else {
-                if (foundComment.author.id.equals(req.user._id)) {
-                    next();
-                } else {
-                    console.log("You do not have permission to do that.");
-                    res.redirect("back");
-                }
-            }
-        });
-    } else {
-        console.log("You need to be logged in to do that.");
-        res.redirect("back");
-}
-}
 
 module.exports = router;

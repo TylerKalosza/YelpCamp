@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const middleware = require("../middleware"); // Automatically knows I'm looking for index.js.
 const Campground = require("../models/campground");
 const Comment = require("../models/comment");
 
@@ -16,7 +17,7 @@ router.get("/", (req, res) => {
 });
 
 // Create route.
-router.post("/", isLoggedIn, (req, res) => {
+router.post("/", middleware.isLoggedIn, (req, res) => {
     // Get the data from the form.
     const name = req.body.name;
     const image = req.body.image;
@@ -45,7 +46,7 @@ router.post("/", isLoggedIn, (req, res) => {
 });
 
 // New route - This needs to be declared before the show route.
-router.get("/new", isLoggedIn, (req, res) => {
+router.get("/new", middleware.isLoggedIn, (req, res) => {
     res.render("campgrounds/new");
 });
 
@@ -61,14 +62,14 @@ router.get("/:id", (req, res) => {
 });
 
 // Edit route.
-router.get("/:id/edit", checkCampgroundOwnership, (req, res) => {
+router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
     Campground.findById(req.params.id, (err, foundCampground) => {
         res.render("campgrounds/edit", {campground: foundCampground});
     });
 });
 
 // Update route.
-router.put("/:id", checkCampgroundOwnership, (req, res) => {
+router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
     Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updatedCampground) => {
         if (err) {
             console.log(err);
@@ -79,7 +80,7 @@ router.put("/:id", checkCampgroundOwnership, (req, res) => {
 });
 
 // Delete route, this removes the comments, it is older syntax.
-router.delete("/:id", checkCampgroundOwnership, (req, res) => {
+router.delete("/:id", middleware.checkCampgroundOwnership, (req, res) => {
     Campground.findByIdAndDelete(req.params.id, (err, campground) => {
         if (err) {
             console.log(err);
@@ -106,37 +107,5 @@ router.delete("/:id", checkCampgroundOwnership, (req, res) => {
 //         }
 //     });
 // });
-
-//------------
-// Middleware
-//------------
-
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-
-    res.redirect("/login");
-}
-
-function checkCampgroundOwnership(req, res, next) {
-    if (req.isAuthenticated()){
-        Campground.findById(req.params.id, (err, foundCampground) => {
-            if (err) {
-                console.log(err);
-                res.redirect("back");
-            } else {
-                if (foundCampground.author.id.equals(req.user._id)) {
-                    next();
-                } else {
-                    console.log("You do not have permission to do that.");
-                    res.redirect("back");
-                }
-            }
-        });
-    } else {
-        res.send("You need to be logged in to do that.");
-    }
-}
 
 module.exports = router;
