@@ -10,6 +10,6 @@
     padding: 9px;
 }
 
-#delete-campground-form {
+.inline-form {
     display: inline;
 }

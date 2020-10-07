@@ -52,7 +52,7 @@ app.use((req, res, next) => {
 
 // Set up the route files to use.
 app.use(indexRoutes);
-app.use("/campgrounds", campgroundRoutes); // If I include "/campgrounds" here then I can take them out of the routes in the campgrounds.js file.
+app.use("/campgrounds", campgroundRoutes); // If I include "/campgrounds" here then I can take them out of the routes in the campgrounds.js file. This is called a nested route.
 app.use("/campgrounds/:id/comments", commentRoutes);
 
 // Tell Express to listen for requests (start server).

@@ -1,4 +1,5 @@
 const express = require("express");
+const campground = require("../models/campground");
 const router = express.Router({mergeParams: true}); // Merges the parameters that were removed and placed in the app.js.
 const Campground = require("../models/campground");
 const Comment = require("../models/comment");
@@ -39,6 +40,40 @@ router.get("/new", isLoggedIn, (req, res) => {
         }
     });
 });
+
+// Edit comment route.
+router.get("/:commentId/edit", (req, res) => {
+    Comment.findById(req.params.commentId, (err, foundComment) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("comments/edit", {campgroundId: req.params.id, comment: foundComment});
+        }
+    });
+});
+
+// Update comment route.
+router.put("/:commentId", (req, res) => {
+    Comment.findByIdAndUpdate(req.params.commentId, req.body.comment, (err, updatedComment) => {
+        if (err) {
+            console.log(err);
+            res.redirect("back");
+        } else {
+            res.redirect("/campgrounds/" + req.params.id);
+        }
+    });
+});
+
+// Delete route.
+router.delete("/:commentId", (req, res) => {
+    Comment.findByIdAndDelete(req.params.commentId, (err) => {
+        if (err) {
+            console.log(err);
+        }
+
+        res.redirect("/campgrounds/" + req.params.id);
+    })
+})
 
 // Middleware.
 function isLoggedIn(req, res, next) {
