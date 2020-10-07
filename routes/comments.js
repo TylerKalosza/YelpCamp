@@ -1,5 +1,4 @@
 const express = require("express");
-const campground = require("../models/campground");
 const router = express.Router({mergeParams: true}); // Merges the parameters that were removed and placed in the app.js.
 const Campground = require("../models/campground");
 const Comment = require("../models/comment");
@@ -42,7 +41,7 @@ router.get("/new", isLoggedIn, (req, res) => {
 });
 
 // Edit comment route.
-router.get("/:commentId/edit", (req, res) => {
+router.get("/:commentId/edit", checkCommentOwnership, (req, res) => {
     Comment.findById(req.params.commentId, (err, foundComment) => {
         if (err) {
             console.log(err);
@@ -53,7 +52,7 @@ router.get("/:commentId/edit", (req, res) => {
 });
 
 // Update comment route.
-router.put("/:commentId", (req, res) => {
+router.put("/:commentId", checkCommentOwnership, (req, res) => {
     Comment.findByIdAndUpdate(req.params.commentId, req.body.comment, (err, updatedComment) => {
         if (err) {
             console.log(err);
@@ -65,7 +64,7 @@ router.put("/:commentId", (req, res) => {
 });
 
 // Delete route.
-router.delete("/:commentId", (req, res) => {
+router.delete("/:commentId", checkCommentOwnership, (req, res) => {
     Comment.findByIdAndDelete(req.params.commentId, (err) => {
         if (err) {
             console.log(err);
@@ -75,13 +74,37 @@ router.delete("/:commentId", (req, res) => {
     })
 })
 
-// Middleware.
+//------------
+// Middleware
+//------------
+
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
 
     res.redirect("/login");
+}
+
+function checkCommentOwnership(req, res, next) {
+    if (req.isAuthenticated()){
+        Comment.findById(req.params.commentId, (err, foundComment) => {
+            if (err) {
+                console.log(err);
+                res.redirect("back");
+            } else {
+                if (foundComment.author.id.equals(req.user._id)) {
+                    next();
+                } else {
+                    console.log("You do not have permission to do that.");
+                    res.redirect("back");
+                }
+            }
+        });
+    } else {
+        console.log("You need to be logged in to do that.");
+        res.redirect("back");
+}
 }
 
 module.exports = router;
